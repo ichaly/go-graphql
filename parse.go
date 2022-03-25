@@ -411,23 +411,7 @@ func (c *parseCtx) check(t reflect.Type, hasIDTag bool) (*obj, error) {
 		typesInner := c.schema.types
 		typesInner[res.typeName] = &res
 		c.schema.types = typesInner
-
-		for i := 0; i < t.NumField(); i++ {
-			field := t.Field(i)
-			customName, obj, err := c.checkStructField(field, i)
-			if err != nil {
-				return nil, err
-			}
-			if obj != nil {
-				name := formatGoNameToQL(field.Name)
-				if customName != nil {
-					name = *customName
-				}
-				obj.qlFieldName = []byte(name)
-
-				res.objContents[getObjKey(obj.qlFieldName)] = obj
-			}
-		}
+		c.checkStructFieldRecursive(t, &res)
 	case reflect.Array, reflect.Slice, reflect.Ptr:
 		isPtr := t.Kind() == reflect.Ptr
 		if isPtr {
@@ -553,6 +537,29 @@ func (c *parseCtx) check(t reflect.Type, hasIDTag bool) (*obj, error) {
 	}
 
 	return &res, nil
+}
+
+func (c *parseCtx) checkStructFieldRecursive(t reflect.Type, res *obj) {
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		if field.Anonymous {
+			c.checkStructFieldRecursive(field.Type, res)
+		}
+
+		customName, obj, err := c.checkStructField(field, i)
+		if err != nil {
+			return
+		}
+		if obj != nil {
+			name := formatGoNameToQL(field.Name)
+			if customName != nil {
+				name = *customName
+			}
+			obj.qlFieldName = []byte(name)
+
+			res.objContents[getObjKey(obj.qlFieldName)] = obj
+		}
+	}
 }
 
 func (c *parseCtx) checkStructField(field reflect.StructField, idx int) (customName *string, obj *obj, err error) {
