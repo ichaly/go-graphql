@@ -1,4 +1,4 @@
-module github.com/mjarkk/go-graphql
+module github.com/ichaly/go-graphql
 
 go 1.16
 
