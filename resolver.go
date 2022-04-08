@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
 	"unsafe"
 
@@ -562,10 +563,14 @@ func (ctx *Ctx) resolveField(typeObj *obj, dept uint8, addCommaBefore bool) (ski
 		goValue := ctx.getGoValue()
 		if typeObjField.customObjValue != nil {
 			ctx.setNextGoValue(*typeObjField.customObjValue)
-		} else if typeObjField.valueType == valueTypeMethod && typeObjField.method.isTypeMethod {
-			ctx.setNextGoValue(goValue.Method(typeObjField.structFieldIdx))
 		} else {
-			ctx.setNextGoValue(goValue.Field(typeObjField.structFieldIdx))
+			name := string(typeObjField.qlFieldName)
+			name = strings.ToUpper(name[:1]) + name[1:]
+			if typeObjField.valueType == valueTypeMethod && typeObjField.method.isTypeMethod {
+				ctx.setNextGoValue(goValue.MethodByName("Resolve" + name))
+			} else {
+				ctx.setNextGoValue(goValue.FieldByName(name))
+			}
 		}
 
 		criticalErr = ctx.resolveFieldDataValue(typeObjField, dept, fieldHasSelection)
