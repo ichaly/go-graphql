@@ -1690,3 +1690,22 @@ func b2s(a []byte) string {
 func s2b(s string) []byte {
 	return *(*[]byte)(unsafe.Pointer(&s))
 }
+
+/************************************/
+/***** GOLANG.ORG/X/NET/CONTEXT *****/
+/************************************/
+func (c *Ctx) Deadline() (deadline time.Time, ok bool) {
+	return c.context.Deadline()
+}
+
+func (c *Ctx) Done() <-chan struct{} {
+	return c.context.Done()
+}
+
+func (c *Ctx) Err() error {
+	return c.context.Err()
+}
+
+func (c *Ctx) Value(key interface{}) interface{} {
+	return c.context.Value(key)
+}
