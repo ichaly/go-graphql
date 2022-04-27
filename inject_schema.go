@@ -1,11 +1,11 @@
-package graphql
+package yarql
 
 import (
 	"log"
 	"reflect"
 	"sort"
 
-	h "github.com/mjarkk/go-graphql/helpers"
+	h "github.com/mjarkk/yarql/helpers"
 )
 
 func (s *Schema) injectQLTypes(ctx *parseCtx) {

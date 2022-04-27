@@ -1,4 +1,4 @@
-package graphql
+package yarql
 
 import (
 	"bytes"
@@ -13,8 +13,8 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/mjarkk/go-graphql/bytecode"
-	"github.com/mjarkk/go-graphql/helpers"
+	"github.com/mjarkk/yarql/bytecode"
+	"github.com/mjarkk/yarql/helpers"
 	"github.com/valyala/fastjson"
 )
 
@@ -24,7 +24,7 @@ type Ctx struct {
 	schema                   *Schema
 	query                    bytecode.ParserCtx
 	charNr                   int
-	context                  context.Context
+	context                  *context.Context
 	path                     []byte
 	getFormFile              func(key string) (*multipart.FileHeader, error) // Get form file to support file uploading
 	operatorHasArguments     bool
@@ -103,6 +103,25 @@ func (ctx *Ctx) SetValue(key string, value interface{}) {
 	}
 }
 
+// GetContext returns the Go request context
+func (ctx *Ctx) GetContext() context.Context {
+	if ctx.context == nil {
+		return nil
+	}
+	return *ctx.context
+}
+
+// SetContext overwrites the request's Go context
+func (ctx *Ctx) SetContext(newContext context.Context) {
+	if newContext == nil {
+		ctx.context = nil
+	} else if ctx == nil {
+		ctx.context = &newContext
+	} else {
+		*ctx.context = newContext
+	}
+}
+
 // GetPath returns the graphql path to the current field json encoded
 func (ctx *Ctx) GetPath() json.RawMessage {
 	if len(ctx.path) == 0 {
@@ -146,7 +165,7 @@ type ResolveOptions struct {
 // The result json is written to (*Schema).Result
 func (s *Schema) Resolve(query []byte, opts ResolveOptions) []error {
 	if !s.parsed {
-		fmt.Println("CALL (*graphql.Schema).Parse() before resolve")
+		fmt.Println("CALL (*yarql.Schema).Parse() before resolve")
 		return []error{errors.New("invalid setup")}
 	}
 
@@ -157,7 +176,7 @@ func (s *Schema) Resolve(query []byte, opts ResolveOptions) []error {
 		schema:                 ctx.schema,
 		query:                  ctx.query,
 		charNr:                 0,
-		context:                opts.Context,
+		context:                nil,
 		path:                   ctx.path[:0],
 		getFormFile:            opts.GetFormFile,
 		rawVariables:           opts.Variables,
@@ -177,6 +196,9 @@ func (s *Schema) Resolve(query []byte, opts ResolveOptions) []error {
 	}
 	if opts.Tracing {
 		ctx.tracing.reset()
+	}
+	if opts.Context != nil {
+		ctx.context = &opts.Context
 	}
 	ctx.startTrace()
 
@@ -802,7 +824,7 @@ func (ctx *Ctx) resolveFieldDataValue(typeObj *obj, dept uint8, hasSubSelection 
 		}
 
 		if ctx.context != nil {
-			err := ctx.context.Err()
+			err := (*ctx.context).Err()
 			if err != nil {
 				// Context ended
 				ctx.err(err.Error())

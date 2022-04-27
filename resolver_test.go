@@ -1,4 +1,4 @@
-package graphql
+package yarql
 
 import (
 	"bytes"
@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	a "github.com/mjarkk/go-graphql/assert"
-	"github.com/mjarkk/go-graphql/helpers"
+	a "github.com/mjarkk/yarql/assert"
+	"github.com/mjarkk/yarql/helpers"
 )
 
 func bytecodeParse(t *testing.T, s *Schema, query string, queries interface{}, methods interface{}, opts ...ResolveOptions) (string, []error) {
@@ -1855,7 +1855,7 @@ func TestBytecodeResolveInterfaceArrayWithFragment(t *testing.T) {
 type TestBytecodeResolveContextData struct{}
 
 func (TestBytecodeResolveContextData) ResolveFoo(ctx *Ctx) bool {
-	<-ctx.context.Done()
+	<-(*ctx.context).Done()
 	return true
 }
 

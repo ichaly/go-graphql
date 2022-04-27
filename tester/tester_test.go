@@ -3,8 +3,8 @@ package tester
 import (
 	"testing"
 
-	"github.com/mjarkk/go-graphql"
-	"github.com/mjarkk/go-graphql/assert"
+	"github.com/mjarkk/yarql"
+	"github.com/mjarkk/yarql/assert"
 )
 
 type TesterQuerySchema struct {
@@ -23,7 +23,7 @@ type BarSchemaType struct {
 type TesterMutationSchema struct{}
 
 func TestTester(t *testing.T) {
-	s := graphql.NewSchema()
+	s := yarql.NewSchema()
 	err := s.Parse(TesterQuerySchema{}, TesterMutationSchema{}, nil)
 	assert.NoError(t, err)
 

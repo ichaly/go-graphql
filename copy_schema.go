@@ -1,10 +1,10 @@
-package graphql
+package yarql
 
 import (
 	"reflect"
 
-	"github.com/mjarkk/go-graphql/bytecode"
-	"github.com/mjarkk/go-graphql/helpers"
+	"github.com/mjarkk/yarql/bytecode"
+	"github.com/mjarkk/yarql/helpers"
 	"github.com/valyala/fastjson"
 )
 
@@ -63,7 +63,7 @@ func (ctx *Ctx) copy(schema *Schema) *Ctx {
 		schema:                   schema,
 		query:                    *bytecode.NewParserCtx(),
 		charNr:                   ctx.charNr,
-		context:                  ctx.context,
+		context:                  nil,
 		path:                     []byte{},
 		getFormFile:              ctx.getFormFile,
 		operatorHasArguments:     ctx.operatorHasArguments,

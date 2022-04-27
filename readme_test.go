@@ -1,10 +1,10 @@
-package graphql
+package yarql
 
 import (
 	"log"
 	"testing"
 
-	a "github.com/mjarkk/go-graphql/assert"
+	a "github.com/mjarkk/yarql/assert"
 )
 
 // Making sure the code in the readme actually works :)

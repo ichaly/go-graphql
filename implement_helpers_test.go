@@ -1,11 +1,11 @@
-package graphql
+package yarql
 
 import (
 	"errors"
 	"strings"
 	"testing"
 
-	a "github.com/mjarkk/go-graphql/assert"
+	a "github.com/mjarkk/yarql/assert"
 )
 
 func TestHandleRequestRequestInURL(t *testing.T) {
