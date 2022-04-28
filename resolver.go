@@ -1717,17 +1717,17 @@ func s2b(s string) []byte {
 /***** GOLANG.ORG/X/NET/CONTEXT *****/
 /************************************/
 func (c *Ctx) Deadline() (deadline time.Time, ok bool) {
-	return c.context.Deadline()
+	return c.GetContext().Deadline()
 }
 
 func (c *Ctx) Done() <-chan struct{} {
-	return c.context.Done()
+	return c.GetContext().Done()
 }
 
 func (c *Ctx) Err() error {
-	return c.context.Err()
+	return c.GetContext().Err()
 }
 
 func (c *Ctx) Value(key interface{}) interface{} {
-	return c.context.Value(key)
+	return c.GetContext().Value(key)
 }
